@@ -13,29 +13,30 @@ export type CategoryItem = {
   rules: RuleItem[];
 };
 
-export type QuestionItem = {
-  _id?: string;
-  label: string;
-  points: number;
-};
-
 export type OptionItem = {
   _id?: string;
   label: string;
-  isCorrect: boolean;
 };
 
-export type Question = {
-  category: PopulatedDoc<CategoryItem & Document>;
-  questions: QuestionItem[];
-};
-
-export type OptionArray = {
-  question: PopulatedDoc<QuestionItem & Document>;
+export type QuizItem = {
+  _id?: string;
+  question: string;
   options: OptionItem[];
 };
 
-export type Option = {
+export type AnswerItem = {
+  _id?: string;
+  question: PopulatedDoc<QuizItem & Document>;
+  answer: PopulatedDoc<OptionItem & Document>;
+  points: number;
+};
+
+export type Quiz = {
   category: PopulatedDoc<CategoryItem & Document>;
-  items: OptionArray[];
+  quiz: QuizItem[];
+};
+
+export type Answer = {
+  category: PopulatedDoc<CategoryItem & Document>;
+  quiz: AnswerItem[];
 };
