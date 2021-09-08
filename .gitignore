@@ -21,8 +21,8 @@
 .env.production.local
 
 categoryDB.ts
-optionDB.ts
-questionDB.ts
+quizDB.ts
+answerDB.ts
 insert.router.ts
 
 npm-debug.log*
