@@ -1,9 +1,11 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import bodyParser from "body-parser";
 import { initializeMongoDB } from "./db/db.connect";
+import { verifyAnswers } from "./controllers/answer.controller";
 import categoryRouter from "./routes/category.router";
-import questionRouter from "./routes/question.router";
-import optionRouter from "./routes/option.router";
+import insertRouter from "./routes/insert.router";
+import quizRouter from "./routes/quiz.router";
 import undefinedRoutesHandler from "./middlewares/undefinedRoutesHandler";
 import errorHandler from "./middlewares/errorHandler";
 
@@ -14,15 +16,17 @@ if (process.env.NODE_ENV !== "production") {
 const URI = process.env.MONGODB_URI || "";
 const app = express();
 app.use(cors());
+app.use(bodyParser.json());
 initializeMongoDB(URI);
 
 app.get("/", (_: Request, res: Response) => {
   res.send("Welcome to RabiQuiz server");
 });
 
+app.use("/insert", insertRouter);
 app.use("/categories", categoryRouter);
-app.use("/questions", questionRouter);
-app.use("/options", optionRouter);
+app.use("/quizzes", quizRouter);
+app.post("/verify", verifyAnswers);
 app.use(undefinedRoutesHandler);
 app.use(errorHandler);
 

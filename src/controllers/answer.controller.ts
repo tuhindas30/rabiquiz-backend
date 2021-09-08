@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { Answer } from "../models/answer.model";
 import { HttpError } from "../utils/helper";
 import { doesCategoryExist, findAnswerByQuestionId } from "./helper";
 
@@ -10,10 +11,13 @@ const verifyAnswers = async (
   const { categoryId, answers } = req.body;
   let score = 0;
   try {
+    await doesCategoryExist(categoryId);
+    const correctAnswers = await Answer.findOne({
+      category: categoryId,
+    });
     if (!Array.isArray(answers)) {
       throw new HttpError(400, "answers should be an array");
     }
-    await doesCategoryExist(categoryId);
     for (let i = 0; i < answers.length; i++) {
       let answer = answers[i];
       const correctAnswer = await findAnswerByQuestionId(
@@ -26,7 +30,7 @@ const verifyAnswers = async (
     }
     return res.json({
       status: "SUCCESS",
-      data: { score },
+      data: { score, answers: correctAnswers?.quiz },
       message: "Score calculated successfully",
     });
   } catch (err) {
