@@ -1,6 +1,6 @@
+import { Answer } from "../models/answer.model";
 import { Category } from "../models/category.model";
-import { Option } from "../models/option.model";
-import { Question } from "../models/question.model";
+import { Quiz } from "../models/quiz.model";
 import { HttpError } from "../utils/helper";
 
 const doesCategoryExist = async (categoryId: string) => {
@@ -11,17 +11,17 @@ const doesCategoryExist = async (categoryId: string) => {
   return category;
 };
 
-const findQuestionsByCategoryId = async (categoryId: string) => {
-  const categoryQuestions = await Question.findOne({ category: categoryId });
-  if (categoryQuestions?.questions.length === 0) {
-    throw new HttpError(404, `No questions found category ${categoryId}`);
+const findQuizByCategoryId = async (categoryId: string) => {
+  const categoryQuiz = await Quiz.findOne({ category: categoryId });
+  if (categoryQuiz?.quiz.length === 0) {
+    throw new HttpError(404, `No quiz found for category ${categoryId}`);
   }
-  return categoryQuestions;
+  return categoryQuiz;
 };
 
 const findQuestionById = async (categoryId: string, questionId: string) => {
-  const categoryQuestions = await Question.findOne({ category: categoryId });
-  const question = categoryQuestions?.questions.find(
+  const categoryQuiz = await Quiz.findOne({ category: categoryId });
+  const question = categoryQuiz?.quiz.find(
     (question) => question._id == questionId
   );
 
@@ -31,32 +31,22 @@ const findQuestionById = async (categoryId: string, questionId: string) => {
   return question;
 };
 
-const findOptionsByCategoryId = async (categoryId: string) => {
-  const categoryOptions = await Option.findOne({ category: categoryId });
-  if (categoryOptions?.items.length === 0) {
-    throw new HttpError(404, `No options found for category ${categoryId}`);
-  }
-  return categoryOptions;
-};
-
-const findOptionsByQuestionId = async (
+const findAnswerByQuestionId = async (
   categoryId: string,
   questionId: string
 ) => {
-  const categoryOptions = await Option.findOne({ category: categoryId });
-  const options = categoryOptions?.items.find(
-    (item) => item.question == questionId
-  );
-  if (!options) {
-    throw new HttpError(404, `No options found for question ${questionId}`);
+  const categoryQuiz = await Answer.findOne({ category: categoryId });
+  const answer = categoryQuiz?.quiz.find((quiz) => quiz.question == questionId);
+
+  if (!answer) {
+    throw new HttpError(404, `No question with id: ${questionId} found`);
   }
-  return options;
+  return answer;
 };
 
 export {
   doesCategoryExist,
-  findQuestionsByCategoryId,
+  findQuizByCategoryId,
   findQuestionById,
-  findOptionsByCategoryId,
-  findOptionsByQuestionId,
+  findAnswerByQuestionId,
 };

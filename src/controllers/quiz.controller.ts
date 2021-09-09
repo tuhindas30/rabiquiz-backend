@@ -1,33 +1,29 @@
 import { NextFunction, Request, Response } from "express";
-import { Question } from "../models/question.model";
+import { Quiz } from "../models/quiz.model";
 import { HttpError } from "../utils/helper";
 import {
   doesCategoryExist,
-  findQuestionsByCategoryId,
+  findQuizByCategoryId,
   findQuestionById,
 } from "./helper";
 
-const getAllQuestions = async (
-  _: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const getAllQuiz = async (_: Request, res: Response, next: NextFunction) => {
   try {
-    const questions = await Question.find({});
-    if (questions.length === 0) {
-      throw new HttpError(404, "No questions found");
+    const quiz = await Quiz.find({});
+    if (quiz.length === 0) {
+      throw new HttpError(404, "No quiz found");
     }
     res.json({
       status: "SUCCESS",
-      data: questions,
-      message: "Questions found",
+      data: quiz,
+      message: "Quizzes found",
     });
   } catch (err) {
     next(err);
   }
 };
 
-const getQuestionsByCategoryId = async (
+const getQuizByCategoryId = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -35,11 +31,11 @@ const getQuestionsByCategoryId = async (
   const { categoryId } = req.params;
   try {
     await doesCategoryExist(categoryId);
-    const questions = await findQuestionsByCategoryId(categoryId);
+    const quiz = await findQuizByCategoryId(categoryId);
     res.json({
       status: "SUCCESS",
-      data: questions,
-      message: `Questions of category ${categoryId} found`,
+      data: quiz,
+      message: `Quiz of category ${categoryId} found`,
     });
   } catch (err) {
     next(err);
@@ -65,4 +61,4 @@ const getQuestionById = async (
   }
 };
 
-export { getAllQuestions, getQuestionsByCategoryId, getQuestionById };
+export { getAllQuiz, getQuizByCategoryId, getQuestionById };
